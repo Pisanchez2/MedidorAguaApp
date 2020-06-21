@@ -15,6 +15,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,34 +26,23 @@ import com.sr.tasrfb.ui.DBs.Socios.Socio;
 
 public class Socios extends Fragment {
 
-
-    private TextView NumSocioText, NombreSocioText, MzText,LtText,NumMedidorText;
-
+    private TextView NumSocioText, NombreSocioText, MzText,LtText,NumMedidorText,CedText, NoHabit;
     private EditText FechaInsText;
-
     private Button EnviarMedidasBtn,BuscarSocioBtn;
-
     private Socio socio;
-
     private DatabaseReference reff;
-    private DatabaseReference reffBuscar;
+    private DatabaseReference reffBuscar , reffMedidas;
     private DatabaseReference reff2;
-
-
 
     public Socios() {
         // Required empty public constructor
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
-
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,16 +53,14 @@ public class Socios extends Fragment {
         NombreSocioText=v.findViewById(R.id.SNombreSocioText);
         MzText=v.findViewById(R.id.SMzText);
         LtText=v.findViewById(R.id.SLtText);
+        CedText=v.findViewById(R.id.SCedText);
+        NoHabit=v.findViewById(R.id.SNhabitext);
         //NumMedidorText=v.findViewById(R.id.SNumMedidorText);
         FechaInsText=v.findViewById(R.id.SFechaInstalacionText);
-
-
         EnviarMedidasBtn=v.findViewById(R.id.ActualizarBtn);
         BuscarSocioBtn=v.findViewById(R.id.BuscarSocioBtn);
-
         socio = new Socio();
         reff= FirebaseDatabase.getInstance().getReference().child("Socio");
-
 
         // TOMAR LA FECHA INSTALACION
 
@@ -87,7 +75,6 @@ public class Socios extends Fragment {
                 }
             }
 
-
             private void showDatePickerDialog() {
                 DatePickerFragment newFragment = DatePickerFragment.newInstance(new DatePickerDialog.OnDateSetListener() {
 
@@ -100,16 +87,31 @@ public class Socios extends Fragment {
 
                 newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
             }
-
-
         });
-
-
 
         BuscarSocioBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                reffBuscar=FirebaseDatabase.getInstance().getReference().child("Socio").child(NumSocioText.getText().toString());
+
+                    reffMedidas = FirebaseDatabase.getInstance().getReference().child("Medidas").child(NumSocioText.getText().toString());
+
+                        reffMedidas.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.child("Medidor").hasChild("fecha_Instalacion")){
+                                    String fins = dataSnapshot.child("Medidor").child("fecha_Instalacion").getValue().toString();
+                                    FechaInsText.setText(fins);
+                                }else{
+                                    reffMedidas.child("Medidor").child("fecha_Instalacion").setValue("01-1-2000");
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+        reffBuscar=FirebaseDatabase.getInstance().getReference().child("Socio").child(NumSocioText.getText().toString());
                 reffBuscar.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -118,24 +120,21 @@ public class Socios extends Fragment {
                         String lt= dataSnapshot.child("lt").getValue().toString();
                         String mz= dataSnapshot.child("mz").getValue().toString();
                         String num= dataSnapshot.child("num").getValue().toString();
-                       // String fins= dataSnapshot.child("medidor").child("fecha_Instalacion").getValue().toString();
-                        //String numed= dataSnapshot.child("medidor").child("num").getValue().toString();
+                        String cedula= dataSnapshot.child("cedula").getValue().toString();
+                        String n_habitantes= dataSnapshot.child("n_habitantes").getValue().toString();
 
                         NombreSocioText.setText(nombre);
                         LtText.setText(lt);
                         MzText.setText(mz);
-                        //NumMedidorText.setText(numed);
-                        //FechaInsText.setText(fins);
-
+                        CedText.setText(cedula);
+                        NoHabit.setText(n_habitantes);
 
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
                     }
                 });
-
             }
         });
 
@@ -147,20 +146,14 @@ public class Socios extends Fragment {
                 reff.child(NumSocioText.getText().toString()+"/mz").setValue(MzText.getText().toString());
                 reff.child(NumSocioText.getText().toString()+"/nombre").setValue(NombreSocioText.getText().toString());
                 reff.child(NumSocioText.getText().toString()+"/num").setValue(NumSocioText.getText().toString());
-
-
-
+                reff.child(NumSocioText.getText().toString()+"/cedula").setValue(CedText.getText().toString());
+                reff.child(NumSocioText.getText().toString()+"/n_habitantes").setValue(NoHabit.getText().toString());
                 reff2= FirebaseDatabase.getInstance().getReference().child("Medidas/"+NumSocioText.getText().toString()+"/Medidor/fecha_Instalacion");
                 reff2.setValue(FechaInsText.getText().toString());
-                Log.v("SOCIO","HASIDOENVIADO");
-
-
+                Snackbar.make(view, "Socio Actualizado Correctamente", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
-
         return v;
-
-
     }
 }
