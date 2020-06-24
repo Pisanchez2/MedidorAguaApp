@@ -21,9 +21,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sr.tasrfb.ui.DBs.Socios.ClaseMes;
-import com.sr.tasrfb.ui.DBs.Socios.CurrentDate;
-import com.sr.tasrfb.ui.DBs.Socios.Medidor;
-import com.sr.tasrfb.ui.DBs.Socios.Socio;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,13 +30,11 @@ public class TomarMediciones extends Fragment {
 
 
     private TextView NumSocioText, NombreSocioText, MzText,LtText,NumMedidorText,MedicionText,CedulaText, NoHabText;
-
+    private TextView Tmes1,Tmes2,Tmes3,Tmes4,Tmes5,Tmes6, Tcons1,Tcons2,Tcons3,Tcons4,Tcons5,Tcons6,Tmed1,Tmed2,Tmed3,Tmed4,Tmed5,Tmed6;
     private EditText FechaInsText, FechaMedicionText;
-
     private DatabaseReference reffBuscar;
-    private DatabaseReference reffMedidas;
+    private DatabaseReference reffMedidas, reffConsumo;
     private DatabaseReference reff2;
-
 
     public TomarMediciones() {
         // Required empty public constructor
@@ -54,9 +49,154 @@ public class TomarMediciones extends Fragment {
     private String anios;
     private String mesos;
 
+    private String data[];
+    private String datames[];
+    private String datacons[];
+
+
     public void tomaranios(int anio, int me){
         anios= anio + "";
         mesos = me+"";
+
+    }
+
+
+    public void mostrarTabla(){
+
+        reffConsumo = FirebaseDatabase.getInstance().getReference().child("Consumo").child(NumSocioText.getText().toString());
+        reffConsumo.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                datacons = new String[6];
+                 int mesostabla= Integer.parseInt(mesos);
+                //int mesostabla=4;
+                int aniotabla= Integer.parseInt(anios);
+
+                for(int i=0;i<6;i++){
+
+                    if (mesostabla==1){
+                        mesostabla=12;
+                        aniotabla=aniotabla-1;
+                    }else {
+                        mesostabla=mesostabla-1;
+                    }
+
+                    if (dataSnapshot.child("Valores/"+aniotabla+"/").hasChild(""+mesostabla+"/Consumido_m3")){
+                        datacons[i]= dataSnapshot.child("Valores/"+aniotabla+"/"+mesostabla+"/Consumido_m3").getValue().toString();
+                    }else{
+                        datacons[i] = "No info";
+
+                    }
+                }
+
+                Tcons1.setText(datacons[0]);
+                Tcons2.setText(datacons[1]);
+                Tcons3.setText(datacons[2]);
+                Tcons4.setText(datacons[3]);
+                Tcons5.setText(datacons[4]);
+                Tcons6.setText(datacons[5]);
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+        reffMedidas = FirebaseDatabase.getInstance().getReference().child("Medidas").child(NumSocioText.getText().toString());
+        reffMedidas.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                data = new String[6];
+                datames = new String[6];
+                int mesostabla= Integer.parseInt(mesos)+1;
+                //int mesostabla=4;
+                int aniotabla= Integer.parseInt(anios);
+
+                for(int i=0;i<6;i++){
+
+                    if (mesostabla==1){
+                        mesostabla=12;
+                        aniotabla=aniotabla-1;
+                    }else {
+                        mesostabla=mesostabla-1;
+                    }
+
+                    String mesaux;
+                    switch(mesostabla){
+                        case 1:
+                            mesaux="Enero";
+                            break;
+                        case 2:
+                            mesaux="Febrero";
+                            break;
+                        case 3:
+                            mesaux="Marzo";
+                            break;
+                        case 4:
+                            mesaux="Abril";
+                            break;
+                        case 5:
+                            mesaux="Mayo";
+                            break;
+                        case 6:
+                            mesaux="Junio";
+                            break;
+                        case 7:
+                            mesaux="Julio";
+                            break;
+                        case 8:
+                            mesaux="Agosto";
+                            break;
+                        case 9:
+                            mesaux="Septiembre";
+                            break;
+                        case 10:
+                            mesaux="Octubre";
+                            break;
+                        case 11:
+                            mesaux="Noviembre";
+                            break;
+                        case 12:
+                            mesaux="Diciembre";
+                            break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + mesostabla);
+                    }
+                    datames[i]=mesaux;
+
+                    if (dataSnapshot.child("Mediciones/"+aniotabla+"/").hasChild(""+mesostabla)){
+                        data[i]= dataSnapshot.child("Mediciones/"+aniotabla+"/"+mesostabla+"/medicion").getValue().toString();
+                    }else{
+                       data[i] = "No info";
+
+                    }
+                }
+
+                Tmes1.setText(datames[0]);
+                Tmes2.setText(datames[1]);
+                Tmes3.setText(datames[2]);
+                Tmes4.setText(datames[3]);
+                Tmes5.setText(datames[4]);
+                Tmes6.setText(datames[5]);
+
+                Tmed1.setText(data[0]);
+                Tmed2.setText(data[1]);
+                Tmed3.setText(data[2]);
+                Tmed4.setText(data[3]);
+                Tmed5.setText(data[4]);
+                Tmed6.setText(data[5]);
+
+                for(int i=0;i<6;i++) {
+                    Log.v("DATA", "."+ i + data[i] +"MES"+datames[i]);
+                }
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
 
     }
 
@@ -77,6 +217,30 @@ public class TomarMediciones extends Fragment {
         MedicionText= v.findViewById(R.id.TMedText);
         Button enviarMedidasBtn = v.findViewById(R.id.TEnviarMedBtn);
         Button TBuscarSocio = v.findViewById(R.id.TBuscarBtn);
+
+        //Tablas
+        Tmes1=v.findViewById(R.id.Tmes1);
+        Tmes2=v.findViewById(R.id.Tmes2);
+        Tmes3=v.findViewById(R.id.Tmes3);
+        Tmes4=v.findViewById(R.id.Tmes4);
+        Tmes5=v.findViewById(R.id.Tmes5);
+        Tmes6=v.findViewById(R.id.Tmes6);
+
+        Tmed1=v.findViewById(R.id.Tmed1);
+        Tmed2=v.findViewById(R.id.Tmed2);
+        Tmed3=v.findViewById(R.id.Tmed3);
+        Tmed4=v.findViewById(R.id.Tmed4);
+        Tmed5=v.findViewById(R.id.Tmed5);
+        Tmed6=v.findViewById(R.id.Tmed6);
+
+        Tcons1=v.findViewById(R.id.Tcons1);
+        Tcons2=v.findViewById(R.id.Tcons2);
+        Tcons3=v.findViewById(R.id.Tcons3);
+        Tcons4=v.findViewById(R.id.Tcons4);
+        Tcons5=v.findViewById(R.id.Tcons5);
+        Tcons6=v.findViewById(R.id.Tcons6);
+
+
 
         // TOMAR LA FECHA INSTALACION
 
@@ -149,6 +313,8 @@ public class TomarMediciones extends Fragment {
             @Override
             public void onClick(View view) {
                 // Funcion para actualizar los campos en el frame de Tomar Mediciones
+
+                mostrarTabla();
 
                 reffMedidas = FirebaseDatabase.getInstance().getReference().child("Medidas").child(NumSocioText.getText().toString());
 
