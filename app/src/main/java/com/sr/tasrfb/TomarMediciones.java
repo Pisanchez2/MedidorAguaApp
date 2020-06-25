@@ -33,7 +33,7 @@ public class TomarMediciones extends Fragment {
     private TextView Tmes1,Tmes2,Tmes3,Tmes4,Tmes5,Tmes6, Tcons1,Tcons2,Tcons3,Tcons4,Tcons5,Tcons6,Tmed1,Tmed2,Tmed3,Tmed4,Tmed5,Tmed6;
     private EditText FechaInsText, FechaMedicionText;
     private DatabaseReference reffBuscar;
-    private DatabaseReference reffMedidas, reffConsumo;
+    private DatabaseReference reffMedidas;
     private DatabaseReference reff2;
 
     public TomarMediciones() {
@@ -63,13 +63,13 @@ public class TomarMediciones extends Fragment {
 
     public void mostrarTabla(){
 
-        reffConsumo = FirebaseDatabase.getInstance().getReference().child("Consumo").child(NumSocioText.getText().toString());
+        DatabaseReference reffConsumo = FirebaseDatabase.getInstance().getReference().child("Consumo").child(NumSocioText.getText().toString());
         reffConsumo.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 datacons = new String[6];
-                 int mesostabla= Integer.parseInt(mesos);
+                 int mesostabla= Integer.parseInt(mesos)+1;
                 //int mesostabla=4;
                 int aniotabla= Integer.parseInt(anios);
 
@@ -86,17 +86,14 @@ public class TomarMediciones extends Fragment {
                         datacons[i]= dataSnapshot.child("Valores/"+aniotabla+"/"+mesostabla+"/Consumido_m3").getValue().toString();
                     }else{
                         datacons[i] = "No info";
-
                     }
                 }
-
                 Tcons1.setText(datacons[0]);
                 Tcons2.setText(datacons[1]);
                 Tcons3.setText(datacons[2]);
                 Tcons4.setText(datacons[3]);
                 Tcons5.setText(datacons[4]);
                 Tcons6.setText(datacons[5]);
-
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -240,8 +237,6 @@ public class TomarMediciones extends Fragment {
         Tcons5=v.findViewById(R.id.Tcons5);
         Tcons6=v.findViewById(R.id.Tcons6);
 
-
-
         // TOMAR LA FECHA INSTALACION
 
         FechaInsText.setOnClickListener(new View.OnClickListener() {
@@ -249,7 +244,6 @@ public class TomarMediciones extends Fragment {
             public void onClick(View view) {
                 switch (view.getId()){
                     case R.id.TFechaInsText:
-
                     showDatePickerDialog();
                     break;
                 }

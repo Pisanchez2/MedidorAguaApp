@@ -6,32 +6,20 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_grifo"
             android:title="@string/menu_home" />
         <item
             android:id="@+id/TomarMediciones"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Tomar Mediciones" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
-        <item
-            android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_tools" />
+            android:icon="@drawable/ic_measure"
+            android:title="@string/Tomar_Mediciones" />
     </group>
 
-    <item android:title="Gestionar">
+    <item android:title="@string/Gestionar">
         <menu>
             <item
                 android:id="@+id/socios"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Añadir o Actualizar Socios" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/menu_send" />
+                android:icon="@drawable/ic_perso"
+                android:title="@string/Añadir_o_Actualizar_Socios" />
         </menu>
     </item>
 
