@@ -2,11 +2,14 @@
 
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/side_backgroud_fragments"
     tools:context=".Socios">
 
     <Button
@@ -21,25 +24,15 @@
         app:layout_constraintTop_toBottomOf="@+id/SFechaInstalacionText"
         app:layout_constraintVertical_bias="0.295" />
 
-    <Button
-        android:id="@+id/BuscarSocioBtn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/ic_buscar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.773"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
-
     <EditText
         android:id="@+id/SCedText"
         android:layout_width="159dp"
         android:layout_height="43dp"
         android:ems="10"
+        android:textColor="#FFFFFF"
         android:inputType="number"
         android:textAlignment="center"
+        android:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.357"
@@ -55,7 +48,9 @@
         android:ems="10"
         android:focusable="false"
         android:inputType="date"
+        android:textColor="#FFFFFF"
         android:text="01-1-2000"
+        android:backgroundTint="#FFFFFF"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,6 +65,7 @@
         android:layout_height="28dp"
         android:text="No. Hab.:"
         android:textSize="18sp"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.684"
@@ -82,6 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cédula: "
+        android:textColor="#FFFFFF"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -95,6 +92,7 @@
         android:layout_width="32dp"
         android:layout_height="28dp"
         android:text="Mz: "
+        android:textColor="#FFFFFF"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -109,6 +107,7 @@
         android:layout_height="wrap_content"
         android:text="Fecha instalación: "
         android:textSize="18sp"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.06"
@@ -121,8 +120,10 @@
         android:layout_width="53dp"
         android:layout_height="43dp"
         android:ems="10"
+        android:textColor="#FFFFFF"
         android:inputType="number"
         android:textAlignment="center"
+        android:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.913"
@@ -136,6 +137,7 @@
         android:layout_height="32dp"
         android:text="Lt: "
         android:textSize="18sp"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.304"
@@ -148,6 +150,8 @@
         android:layout_width="43dp"
         android:layout_height="43dp"
         android:ems="10"
+        android:backgroundTint="#FFFFFF"
+        android:textColor="#FFFFFF"
         android:inputType="number"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -162,7 +166,9 @@
         android:layout_width="53dp"
         android:layout_height="43dp"
         android:ems="10"
+        android:textColor="#FFFFFF"
         android:textAlignment="center"
+        android:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.455"
@@ -172,26 +178,31 @@
 
     <EditText
         android:id="@+id/SNumsocioText"
-        android:layout_width="69dp"
+        android:layout_width="50dp"
         android:layout_height="40dp"
+        android:backgroundTint="#FFFFFF"
         android:ems="10"
         android:inputType="textPersonName"
         android:textAlignment="center"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.021" />
+        app:layout_constraintVertical_bias="0.02" />
 
     <EditText
         android:id="@+id/SNombreSocioText"
         android:layout_width="258dp"
         android:layout_height="39dp"
         android:ems="10"
+
         android:inputType="textPersonName"
         android:textAlignment="center"
         android:textSize="14sp"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.797"
@@ -206,6 +217,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="32dp"
         android:text="Numero de Socio: "
+        android:textColor="#FFFFFF"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/SNombreSocioText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -219,6 +231,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Nombre: "
+        android:textColor="#FFFFFF"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -226,5 +239,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.094" />
+
+    <ImageButton
+        android:id="@+id/BuscarSocioBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/secondaryColor"
+        android:src="@android:drawable/ic_menu_search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.656"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.022" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
