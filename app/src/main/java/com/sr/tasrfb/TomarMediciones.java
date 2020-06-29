@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,14 +37,15 @@ import java.util.Objects;
 public class TomarMediciones extends Fragment {
 
 
-    private TextView NumSocioText, NombreSocioText, MzText,LtText,NumMedidorText,MedicionText,CedulaText, NoHabText;
+    private TextView NumSocioText, NombreSocioText, MzText,LtText,NumMedidorText,MedicionText,CedulaText, NoHabText , Mensaje;
     private TextView[] Tcons= new TextView[6];
     private TextView[] Tmes= new TextView[6];
     private TextView[] Tmed= new TextView[6];
     private EditText FechaInsText, FechaMedicionText;
-    private DatabaseReference reffBuscar;
+    private DatabaseReference reffBuscar , reffNUM;
     private DatabaseReference reffMedidas;
     private DatabaseReference reff2;
+    private DataSnapshot data2;
 
     public TomarMediciones() {
         // Required empty public constructor
@@ -199,8 +202,8 @@ public class TomarMediciones extends Fragment {
         NoHabText=v.findViewById(R.id.TNhabitext);
         MedicionText= v.findViewById(R.id.TMedText);
         final Button enviarMedidasBtn = v.findViewById(R.id.TEnviarMedBtn);
-        ImageButton TBuscarSocio = v.findViewById(R.id.TBuscarBtn);
-
+        final ImageButton TBuscarSocio = v.findViewById(R.id.TBuscarBtn);
+        Mensaje = v.findViewById(R.id.mensaje);
         //Tablas
         Tmes[0]=v.findViewById(R.id.Tmes1);
         Tmes[1]=v.findViewById(R.id.Tmes2);
@@ -248,6 +251,62 @@ public class TomarMediciones extends Fragment {
             }
 
         });
+
+        //VALIDACIONES
+
+
+        NumSocioText.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,int count, int after) {
+            }
+            @SuppressLint("SetTextI18n")
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+
+                if(s.toString().equals("")){
+                    Mensaje.setText("Ingrese Numero de Socio a Buscar");
+                    Mensaje.setTextColor(Color.YELLOW);
+                    TBuscarSocio.setEnabled(false);
+                }else{
+
+                    reffNUM = FirebaseDatabase.getInstance().getReference().child("Socio");
+                    reffNUM.addValueEventListener(new ValueEventListener() {
+                        @SuppressLint("SetTextI18n")
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            data2= Objects.requireNonNull(dataSnapshot.child(NumSocioText.getText().toString()));
+                            if (!dataSnapshot.hasChild(NumSocioText.getText().toString()) || NumSocioText.getText().toString().equals("")) {
+                                TBuscarSocio.setEnabled(false);
+                                NombreSocioText.setText("");
+                                LtText.setText("");
+                                MzText.setText("");
+                                CedulaText.setText("");
+                                NoHabText.setText("");
+                                FechaInsText.setText("01-1-2000");
+                                Mensaje.setText("El Socio NO Existe");
+                                Mensaje.setTextColor(Color.RED);
+                            }else{
+                                TBuscarSocio.setEnabled(true);
+                                NombreSocioText.setText("");
+                                LtText.setText("");
+                                MzText.setText("");
+                                CedulaText.setText("");
+                                NoHabText.setText("");
+                                FechaInsText.setText("01-1-2000");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+                }
+            }
+        });
+
 
         //SET fecha actual en el campo de fecha de medicion
         Date c = Calendar.getInstance().getTime();
