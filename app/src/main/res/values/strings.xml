@@ -21,4 +21,8 @@
     <string name="Añadir_o_Actualizar_Socios">Añadir o Actualizar Socios</string>
     <string name="ok">Aceptar</string>
     <string name="cancel">Cancelar</string>
+    <string name="seleccione_lo_que_desee_hacer">Seleccione lo que desea hacer:</string>
+    <string name="todo">TODO</string>
+    <string name="actualizar_socio">ACTUALIZAR SOCIO</string>
+    <string name="medicion">Medicion</string>
 </resources>

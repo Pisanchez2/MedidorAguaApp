@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -37,7 +39,7 @@ import java.util.Objects;
 public class TomarMediciones extends Fragment {
 
 
-    private TextView NumSocioText, NombreSocioText, MzText,LtText,NumMedidorText,MedicionText,CedulaText, NoHabText , Mensaje;
+    private TextView  NombreSocioText, MzText,LtText,NumMedidorText,MedicionText,CedulaText, NoHabText , Mensaje;
     private TextView[] Tcons= new TextView[6];
     private TextView[] Tmes= new TextView[6];
     private TextView[] Tmed= new TextView[6];
@@ -46,6 +48,10 @@ public class TomarMediciones extends Fragment {
     private DatabaseReference reffMedidas;
     private DatabaseReference reff2;
     private DataSnapshot data2;
+    private AutoCompleteTextView NumSocioText;
+    private String[] currencies;
+    private String medactua;
+    private String medanter;
 
     public TomarMediciones() {
         // Required empty public constructor
@@ -60,12 +66,8 @@ public class TomarMediciones extends Fragment {
     private String anios;
     private String mesos;
 
-    private String data[];
-    private String datames[];
-    private String datacons[];
 
-
-    public void tomaranios(int anio, int me){
+    private void tomaranios(int anio, int me){
         anios= anio + "";
         mesos = me+"";
 
@@ -79,8 +81,7 @@ public class TomarMediciones extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                datacons = new String[6];
-                 int mesostabla= Integer.parseInt(mesos)+1;
+                int mesostabla= Integer.parseInt(mesos)+1;
                 int aniotabla= Integer.parseInt(anios);
 
                 for(int i=0;i<6;i++){
@@ -112,8 +113,6 @@ public class TomarMediciones extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                data = new String[6];
-                datames = new String[6];
                 int mesostabla= Integer.parseInt(mesos)+1;
                 int aniotabla= Integer.parseInt(anios);
 
@@ -177,7 +176,7 @@ public class TomarMediciones extends Fragment {
                        Tmed[i].setTextColor(Color.YELLOW);
                     }
                 }
-
+                medanter=Tmed[1].getText().toString();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -225,7 +224,26 @@ public class TomarMediciones extends Fragment {
         Tcons[3]=v.findViewById(R.id.Tcons4);
         Tcons[4]=v.findViewById(R.id.Tcons5);
         Tcons[5]=v.findViewById(R.id.Tcons6);
+        final DatabaseReference reffKEY = FirebaseDatabase.getInstance().getReference().child("Socio");
+        final DatabaseReference reffFecha = FirebaseDatabase.getInstance().getReference().child("Medidas");
+        TBuscarSocio.setEnabled(false);
+        MedicionText.setEnabled(false);
 
+        reffKEY.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                StringBuilder dataKeys= new StringBuilder();
+
+                for (DataSnapshot child: dataSnapshot.getChildren()){
+                    dataKeys.append(child.getKey()).append("/");
+                }
+                currencies = dataKeys.toString().split("/");
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         enviarMedidasBtn.setEnabled(false);
 
         // TOMAR LA FECHA INSTALACION
@@ -254,7 +272,6 @@ public class TomarMediciones extends Fragment {
 
         //VALIDACIONES
 
-
         NumSocioText.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
@@ -266,47 +283,57 @@ public class TomarMediciones extends Fragment {
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
 
-                if(s.toString().equals("")){
-                    Mensaje.setText("Ingrese Numero de Socio a Buscar");
-                    Mensaje.setTextColor(Color.YELLOW);
-                    TBuscarSocio.setEnabled(false);
-                }else{
+                boolean valid = NumSocioText.getText().toString().matches("[A-Za-z0-9-_]{1,8}");
+                Log.v("VALID", "onClick: " + valid);
+                if (valid) {
+                    if (s.toString().equals("")) {
+                        Mensaje.setText("Ingrese Numero de Socio a Buscar");
+                        Mensaje.setTextColor(Color.YELLOW);
+                        TBuscarSocio.setEnabled(false);
+                        limpiar();
+                    } else {
 
-                    reffNUM = FirebaseDatabase.getInstance().getReference().child("Socio");
-                    reffNUM.addValueEventListener(new ValueEventListener() {
-                        @SuppressLint("SetTextI18n")
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            data2= Objects.requireNonNull(dataSnapshot.child(NumSocioText.getText().toString()));
-                            if (!dataSnapshot.hasChild(NumSocioText.getText().toString()) || NumSocioText.getText().toString().equals("")) {
-                                TBuscarSocio.setEnabled(false);
-                                NombreSocioText.setText("");
-                                LtText.setText("");
-                                MzText.setText("");
-                                CedulaText.setText("");
-                                NoHabText.setText("");
-                                FechaInsText.setText("01-1-2000");
-                                Mensaje.setText("El Socio NO Existe");
-                                Mensaje.setTextColor(Color.RED);
-                            }else{
-                                TBuscarSocio.setEnabled(true);
-                                NombreSocioText.setText("");
-                                LtText.setText("");
-                                MzText.setText("");
-                                CedulaText.setText("");
-                                NoHabText.setText("");
-                                FechaInsText.setText("01-1-2000");
+                        reffKEY.addValueEventListener(new ValueEventListener() {
+                            @SuppressLint("SetTextI18n")
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                data2 = Objects.requireNonNull(dataSnapshot.child(NumSocioText.getText().toString()));
+                                if (!dataSnapshot.hasChild(NumSocioText.getText().toString()) || NumSocioText.getText().toString().equals("")) {
+                                    TBuscarSocio.setEnabled(false);
+                                    if (!NumSocioText.getText().toString().equals("")) {
+                                        limpiar();
+                                        Mensaje.setText("Socio NO Existe");
+                                        Mensaje.setTextColor(Color.RED);
+                                    }
+                                } else {
+                                    TBuscarSocio.setEnabled(true);
+                                    limpiar();
+                                    Mensaje.setText("Socio SI Existe");
+                                    Mensaje.setTextColor(Color.GREEN);
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                        }
-                    });
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+
+                    }
+                    try {
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getActivity()), R.layout.support_simple_spinner_dropdown_item, currencies);
+                        NumSocioText.setThreshold(1);
+                        NumSocioText.setAdapter(adapter);
+                    } catch (Exception e) {
+                        Log.e("AUTOCOMPLETE", "SOMETHING GOES WRONG: ");
+                    }
+                    //
+                }else{
+                    Mensaje.setText("El numero de socio no puede tener los siguientes caracteres : '.', '#', '$', '/' , '[' , ó ']' ");
+                    Mensaje.setTextColor(Color.RED);
+                    TBuscarSocio.setEnabled(false);
                 }
             }
         });
-
 
         //SET fecha actual en el campo de fecha de medicion
         Date c = Calendar.getInstance().getTime();
@@ -341,7 +368,7 @@ public class TomarMediciones extends Fragment {
                         FechaMedicionText.setText(selectedDate);
                     }
                 });
-                newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+                newFragment.show(Objects.requireNonNull(getActivity()).getSupportFragmentManager(), "datePicker");
             }
         });
 
@@ -359,7 +386,7 @@ public class TomarMediciones extends Fragment {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.child("Medidor").hasChild("fecha_Instalacion")){
-                                String fins = dataSnapshot.child("Medidor").child("fecha_Instalacion").getValue().toString();
+                                String fins = Objects.requireNonNull(dataSnapshot.child("Medidor").child("fecha_Instalacion").getValue()).toString();
                                 FechaInsText.setText(fins);
                                 if(fins.equals("01-1-2000")){
                                     FechaInsText.setTextColor(Color.YELLOW);
@@ -387,7 +414,6 @@ public class TomarMediciones extends Fragment {
                                 String nombre= dataSnapshot.child(NumSocioText.getText().toString()).child("nombre").getValue().toString();
                                 String lt= dataSnapshot.child(NumSocioText.getText().toString()).child("lt").getValue().toString();
                                 String mz= dataSnapshot.child(NumSocioText.getText().toString()).child("mz").getValue().toString();
-                                String num= dataSnapshot.child(NumSocioText.getText().toString()).child("num").getValue().toString();
                                 String cedula= dataSnapshot.child(NumSocioText.getText().toString()).child("cedula").getValue().toString();
                                 String n_habitantes= dataSnapshot.child(NumSocioText.getText().toString()).child("n_habitantes").getValue().toString();
 
@@ -421,11 +447,8 @@ public class TomarMediciones extends Fragment {
                                 CedulaText.setText(cedula);
                                 NoHabText.setText(n_habitantes);
                                 mostrarTabla(view);
-                                Mensaje="Socio Encontrado";
-                                color = R.color.sucess;
                                 enviarMedidasBtn.setEnabled(true);
-
-                                Log.d("ESTADO", "true ");
+                                MedicionText.setEnabled(true);
                             }else{
                                 NombreSocioText.setText("");
                                 LtText.setText("");
@@ -433,10 +456,8 @@ public class TomarMediciones extends Fragment {
                                 CedulaText.setText("");
                                 NoHabText.setText("");
                                 mostrarTabla(view);
-                                Mensaje="Socio NO Encontrado";
-                                color= R.color.error;
                                 enviarMedidasBtn.setEnabled(false);
-                                Log.d("ESTADO", "false ");
+                                MedicionText.setEnabled(false);
                             }
                         }
 
@@ -454,11 +475,27 @@ public class TomarMediciones extends Fragment {
         });
 
         enviarMedidasBtn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View view) {
-                if(NumSocioText.getText().toString().equals("") || MedicionText.getText().toString().equals("")  || FechaMedicionText.getText().toString().equals("") ){
-                  //  Snackbar.make(view, "Sin Casillas Vacias", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    //Ingresar mensaje para "Sin Casillas Vacias"
+                int medant;
+                int medctu;
+                if(!(medanter.equals("No info")) && !MedicionText.getText().toString().equals("")){
+                     medant= Integer.parseInt(medanter);
+                     medctu= Integer.parseInt(MedicionText.getText().toString());
+                }else{
+                    if(medanter.equals("No info")){
+                    medant= 0;
+                    medctu= 1;
+                    }else{
+                    medant= 1;
+                    medctu= 0;
+                    }
+                }
+                Log.d("MEDANTERIOR", "onClick: "+medant + "-MED ACTUAL " + medctu );
+                if(NumSocioText.getText().toString().equals("") || (medant>=medctu) || MedicionText.getText().toString().equals("")  || FechaMedicionText.getText().toString().equals("") ){
+                  Mensaje.setText("Ingrese una Medición Válida");
+                  Mensaje.setTextColor(Color.YELLOW);
                 }else {
                     ClaseMes mes;
                     mes = new ClaseMes();
@@ -467,9 +504,25 @@ public class TomarMediciones extends Fragment {
                     reff2 = FirebaseDatabase.getInstance().getReference().child("Medidas/" + NumSocioText.getText().toString() + "/Mediciones");
                     reff2.child(anios).child(mesos).setValue(mes);
                     enviarMedidasBtn.setEnabled(false);
+                    Mensaje.setText("Medicion Enviada Correctamente");
+                    Mensaje.setTextColor(Color.GREEN);
                 }
             }
         });
         return v;
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void limpiar(){
+        NombreSocioText.setText("");
+        LtText.setText("");
+        MzText.setText("");
+        CedulaText.setText("");
+        NoHabText.setText("");
+        FechaInsText.setText("01-1-2000");
+        for(int i=0;i<6;i++){
+            Tcons[i].setText("");
+            Tmed[i].setText("");
+        }
     }
 }

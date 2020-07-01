@@ -8,11 +8,16 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_grifo"
             android:title="@string/menu_home" />
-        <item
-            android:id="@+id/TomarMediciones"
-            android:icon="@drawable/ic_measure"
-            android:title="@string/Tomar_Mediciones" />
     </group>
+
+    <item android:title="@string/medicion">
+        <menu>
+            <item
+                android:id="@+id/TomarMediciones"
+                android:icon="@drawable/ic_measure"
+                android:title="@string/Tomar_Mediciones" />
+        </menu>
+    </item>
 
     <item android:title="@string/Gestionar">
         <menu>

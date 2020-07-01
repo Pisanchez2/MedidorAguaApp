@@ -28,8 +28,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -87,12 +85,12 @@ public class Socios extends Fragment {
         reffKEY.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String dataKeys="";
+                StringBuilder dataKeys= new StringBuilder();
 
                 for (DataSnapshot child: dataSnapshot.getChildren()){
-                    dataKeys=dataKeys+child.getKey() + "/";
+                    dataKeys.append(child.getKey()).append("/");
                 }
-                currencies = dataKeys.split("/");
+                currencies = dataKeys.toString().split("/");
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
