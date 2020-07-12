@@ -25,4 +25,5 @@
     <string name="todo">TODO</string>
     <string name="actualizar_socio">ACTUALIZAR SOCIO</string>
     <string name="medicion">Medicion</string>
+    <string name="lector_qr">Lector QR</string>
 </resources>

@@ -18,7 +18,7 @@
                 android:title="@string/Tomar_Mediciones" />
             <item
                 android:id="@+id/nav_tools"
-                android:icon="@drawable/ic_menu_manage"
+                android:icon="?android:attr/fingerprintAuthDrawable"
                 android:title="@string/lector_qr" />
         </menu>
 

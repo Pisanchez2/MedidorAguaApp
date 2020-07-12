@@ -17,20 +17,14 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
-import com.androidadvance.topsnackbar.TSnackbar;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sr.tasrfb.ui.DBs.Socios.ClaseMes;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,19 +32,16 @@ import java.util.Objects;
 
 public class TomarMediciones extends Fragment {
 
-
-    private TextView  NombreSocioText, MzText,LtText,NumMedidorText,MedicionText,CedulaText, NoHabText , Mensaje;
+    private TextView  NombreSocioText, MzText,LtText,MedicionText,CedulaText, NoHabText , Mensaje;
     private TextView[] Tcons= new TextView[6];
     private TextView[] Tmes= new TextView[6];
     private TextView[] Tmed= new TextView[6];
     private EditText FechaInsText, FechaMedicionText;
-    private DatabaseReference reffBuscar , reffNUM;
+    private DatabaseReference reffBuscar ;
     private DatabaseReference reffMedidas;
     private DatabaseReference reff2;
-    private DataSnapshot data2;
     private AutoCompleteTextView NumSocioText;
     private String[] currencies;
-    private String medactua;
     private String medanter;
 
     public TomarMediciones() {
@@ -73,7 +64,7 @@ public class TomarMediciones extends Fragment {
 
     }
 
-    private void mostrarTabla(final View view){
+    private void mostrarTabla(){
 
         DatabaseReference reffConsumo = FirebaseDatabase.getInstance().getReference().child("Consumo").child(NumSocioText.getText().toString());
         reffConsumo.addValueEventListener(new ValueEventListener() {
@@ -225,7 +216,6 @@ public class TomarMediciones extends Fragment {
         Tcons[4]=v.findViewById(R.id.Tcons5);
         Tcons[5]=v.findViewById(R.id.Tcons6);
         final DatabaseReference reffKEY = FirebaseDatabase.getInstance().getReference().child("Socio");
-        final DatabaseReference reffFecha = FirebaseDatabase.getInstance().getReference().child("Medidas");
         TBuscarSocio.setEnabled(false);
         MedicionText.setEnabled(false);
 
@@ -265,7 +255,7 @@ public class TomarMediciones extends Fragment {
                         FechaInsText.setText(selectedDate);
                     }
                 });
-                newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+                newFragment.show(Objects.requireNonNull(getActivity()).getSupportFragmentManager(), "datePicker");
             }
 
         });
@@ -297,7 +287,6 @@ public class TomarMediciones extends Fragment {
                             @SuppressLint("SetTextI18n")
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                data2 = Objects.requireNonNull(dataSnapshot.child(NumSocioText.getText().toString()));
                                 if (!dataSnapshot.hasChild(NumSocioText.getText().toString()) || NumSocioText.getText().toString().equals("")) {
                                     TBuscarSocio.setEnabled(false);
                                     if (!NumSocioText.getText().toString().equals("")) {
@@ -407,15 +396,13 @@ public class TomarMediciones extends Fragment {
                     reffBuscar.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            String Mensaje= "";
-                            int color;
                             if (dataSnapshot.hasChild(NumSocioText.getText().toString())){
 
-                                String nombre= dataSnapshot.child(NumSocioText.getText().toString()).child("nombre").getValue().toString();
-                                String lt= dataSnapshot.child(NumSocioText.getText().toString()).child("lt").getValue().toString();
-                                String mz= dataSnapshot.child(NumSocioText.getText().toString()).child("mz").getValue().toString();
-                                String cedula= dataSnapshot.child(NumSocioText.getText().toString()).child("cedula").getValue().toString();
-                                String n_habitantes= dataSnapshot.child(NumSocioText.getText().toString()).child("n_habitantes").getValue().toString();
+                                String nombre= Objects.requireNonNull(dataSnapshot.child(NumSocioText.getText().toString()).child("nombre").getValue()).toString();
+                                String lt= Objects.requireNonNull(dataSnapshot.child(NumSocioText.getText().toString()).child("lt").getValue()).toString();
+                                String mz= Objects.requireNonNull(dataSnapshot.child(NumSocioText.getText().toString()).child("mz").getValue()).toString();
+                                String cedula= Objects.requireNonNull(dataSnapshot.child(NumSocioText.getText().toString()).child("cedula").getValue()).toString();
+                                String n_habitantes= Objects.requireNonNull(dataSnapshot.child(NumSocioText.getText().toString()).child("n_habitantes").getValue()).toString();
 
                                 NombreSocioText.setText(nombre);
 
@@ -446,7 +433,7 @@ public class TomarMediciones extends Fragment {
                                 MzText.setText(mz);
                                 CedulaText.setText(cedula);
                                 NoHabText.setText(n_habitantes);
-                                mostrarTabla(view);
+                                mostrarTabla();
                                 enviarMedidasBtn.setEnabled(true);
                                 MedicionText.setEnabled(true);
                             }else{
@@ -455,7 +442,7 @@ public class TomarMediciones extends Fragment {
                                 MzText.setText("");
                                 CedulaText.setText("");
                                 NoHabText.setText("");
-                                mostrarTabla(view);
+                                mostrarTabla();
                                 enviarMedidasBtn.setEnabled(false);
                                 MedicionText.setEnabled(false);
                             }
@@ -467,9 +454,8 @@ public class TomarMediciones extends Fragment {
                         }
                     });
 
-                }else{
-                    //Ingresar mensaje de notificacion
                 }
+
 
             }
         });
