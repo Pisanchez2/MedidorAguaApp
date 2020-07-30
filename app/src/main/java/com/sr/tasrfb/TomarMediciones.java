@@ -32,6 +32,10 @@ import java.util.Objects;
 
 public class TomarMediciones extends Fragment {
 
+    public TomarMediciones() {
+        // Required empty public constructor
+    }
+
     private TextView  NombreSocioText, MzText,LtText,MedicionText,CedulaText, NoHabText , Mensaje;
     private TextView[] Tcons= new TextView[6];
     private TextView[] Tmes= new TextView[6];
@@ -44,9 +48,7 @@ public class TomarMediciones extends Fragment {
     private String[] currencies;
     private String medanter;
 
-    public TomarMediciones() {
-        // Required empty public constructor
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

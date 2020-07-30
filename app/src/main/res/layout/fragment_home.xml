@@ -45,10 +45,10 @@
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.846"
+        app:layout_constraintHorizontal_bias="0.85"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gotoUserBtn"
-        app:layout_constraintVertical_bias="0.11" />
+        app:layout_constraintVertical_bias="0.147" />
 
     <TextView
         android:id="@+id/text_home4"
