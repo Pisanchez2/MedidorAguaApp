@@ -179,8 +179,16 @@ public class Socios extends Fragment {
                         reffFecha.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.hasChild(NumSocioText.getText().toString())) {
-                                    finsa = Objects.requireNonNull(dataSnapshot.child(NumSocioText.getText().toString()).child("Medidor").child("fecha_Instalacion").getValue()).toString();
+                                if (dataSnapshot.child("Medidor").hasChild("fecha_Instalacion")){
+                                    String fins = Objects.requireNonNull(dataSnapshot.child("Medidor").child("fecha_Instalacion").getValue()).toString();
+                                    FechaInsText.setText(fins);
+                                    if(fins.equals("01-1-2000")){
+                                        FechaInsText.setTextColor(Color.YELLOW);
+                                    }else{
+                                        FechaInsText.setTextColor(Color.GRAY);
+                                    }
+                                }else{
+                                    FechaInsText.setTextColor(Color.YELLOW);
                                 }
                             }
 
@@ -311,6 +319,23 @@ public class Socios extends Fragment {
                         EnviarMedidasBtn.setEnabled(false);
                     }
                     }
+
+               /* }catch (Exception e){
+                    Log.v("DB", "EMPTY ");
+                }*/
+            }
+        });
+
+        FechaInsText.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {}
+
+            public void beforeTextChanged(CharSequence s, int start,int count, int after) {
+            }
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+
+                EnviarMedidasBtn.setEnabled(true);
 
                /* }catch (Exception e){
                     Log.v("DB", "EMPTY ");
